@@ -64,4 +64,4 @@ $country2 = $countries[$endNode];
 
 $result = initialize($adjMatrix, $startNode, $endNode);
 
-echo "Nejkratší vzdálenost z bodu " .$country1 ." do bodu " .$country2 ." je: " . $result["distance"];
+echo "Nejkratší vzdálenost z bodu " .$country1 ." do bodu " .$country2 ." je: " . $result["distance"] ." km.";
