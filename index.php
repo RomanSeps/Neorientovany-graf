@@ -12,18 +12,13 @@ $adjMatrix = [
     [0, 0, 0, 0, 92, 0, 37, 67, 0] // Praha
 ];
 
-function initialize($field){
-	foreach($field as $node){
-    	return $node;
-    }
-}
+function initialize($graph, $start, $end){
+	$numNodes = count($graph);
+    $distances = array_fill(0, $numNodes, PHP_INT_MAX);
+    $distances[$start] = 0;
+    $visited = array_fill(0, $numNodes, false);
+    $previous = array_fill(0, $numNodes, -1);
 
-function findDistance($array, $start){
-	$count = count($adjMatrix);
-    $distance = array_fill(0, $count, PHP_INT_MAX);
-    $distance[$start] = 0;
-    $explored = array_fill(0, $count, false);
-    
     for ($i = 0; $i < $numNodes; $i++) {
         $minDistance = PHP_INT_MAX;
         $minNode = -1;
@@ -33,27 +28,40 @@ function findDistance($array, $start){
                 $minNode = $j;
             }
         }
-        
-    $visited[$minNode] = true;
-	}    
-        
-    if ($minNode == -1) {
-            break;
+
+        if ($minNode == -1) {
+            break; 
         }
-        
-        
-    for ($j = 0; $j < $numNodes; $j++) {
-            if ($adjMatrix[$minNode][$j] > 0 && !$visited[$j]) {
-                $newDistance = $distances[$minNode] + $adjMatrix[$minNode][$j];
+
+        $visited[$minNode] = true;
+
+        for ($j = 0; $j < $numNodes; $j++) {
+            if ($graph[$minNode][$j] > 0 && !$visited[$j]) {
+                $newDistance = $distances[$minNode] + $graph[$minNode][$j];
                 if ($newDistance < $distances[$j]) {
                     $distances[$j] = $newDistance;
+                    $previous[$j] = $minNode;
                 }
             }
         }
     }
-   return $distances;
-   
+    $path = [];
+    for ($node = $end; $node != -1; $node = $previous[$node]) {
+        array_unshift($path, $node);
+    }
+
+    return [
+        "distance" => $distances[$end],
+    ];
 }
 
-$startNode = 0;  // Varnsdorf
-$endNode = 7; // Mělník
+$startNode = 8; // 0 = Varnsdorf, 1 = Děčín, 2 = Bor, atd.
+$endNode = 0; 
+
+$countries = array ("Varnsdorf", "Děčín", "Bor", "Liberec", "Ústí", "Lípa", "Mělník", "Boleslava", "Praha");
+$country1 = $countries[$startNode];
+$country2 = $countries[$endNode];
+
+$result = initialize($adjMatrix, $startNode, $endNode);
+
+echo "Nejkratší vzdálenost z bodu " .$country1 ." do bodu " .$country2 ." je: " . $result["distance"];
